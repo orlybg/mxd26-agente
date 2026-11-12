@@ -1,0 +1,1074 @@
+<!doctype html>
+<html lang="es-MX">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Agente propio, paso a paso</title>
+<meta name="description" content="Material de apoyo de la charla De chatbot rentado a agente propio, Mexico Dreamin' 2026.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght&#64;62..125,400..900&amp;family=Source+Sans+3:ital,wght&#64;0,400;0,600;0,700;1,400&amp;family=JetBrains+Mono:wght&#64;400;600&amp;display=swap">
+<style>
+/* Layout: una columna de lectura tipo libreto de disco en vivo; cada pista (sección) trae su par riff / trámite. */
+:root {
+  --paper: #f5f6f8;
+  --card: #ffffff;
+  --ink: #18202c;
+  --muted: #546072;
+  --rule: #d4d9e1;
+  --rec: #c4283d;
+  --riff: #1c58c4;
+  --riff-bg: #e9eff9;
+  --tram: #94560a;
+  --tram-bg: #fbf2e4;
+  --code-bg: #eef1f5;
+  --code-ink: #1d2633;
+  --focus: #1c58c4;
+  --f-display: "Archivo", "Arial Narrow", "Helvetica Neue", Arial, sans-serif;
+  --f-body: "Source Sans 3", "Segoe UI", "Helvetica Neue", Arial, sans-serif;
+  --f-mono: "JetBrains Mono", ui-monospace, "SFMono-Regular", Menlo, Consolas, monospace;
+  --step-0: 1.0625rem;
+  --step-1: 1.25rem;
+  --step-2: 1.6rem;
+  --step-3: clamp(1.9rem, 1.3rem + 2.6vw, 2.9rem);
+  --measure: 68ch;
+}
+:root[data-theme="dark"] {
+  --paper: #0f131a;
+  --card: #161b24;
+  --ink: #e5e8ee;
+  --muted: #9ba5b5;
+  --rule: #2a3241;
+  --rec: #ff6e80;
+  --riff: #86b2ff;
+  --riff-bg: #15223a;
+  --tram: #f0b660;
+  --tram-bg: #2a2114;
+  --code-bg: #181e29;
+  --code-ink: #dfe4ec;
+  --focus: #86b2ff;
+  color-scheme: dark;
+}
+html { -webkit-text-size-adjust: 100%; }
+body {
+  background: var(--paper);
+  color: var(--ink);
+  font-family: var(--f-body);
+  font-size: var(--step-0);
+  line-height: 1.6;
+  margin: 0;
+}
+.wrap {
+  max-width: 50rem;
+  margin: 0 auto;
+  padding-left: max(16px, env(safe-area-inset-left, 0px));
+  padding-right: max(16px, env(safe-area-inset-right, 0px));
+  padding-block: 2rem 3rem;
+}
+p, li { max-width: var(--measure); }
+a { color: var(--riff); text-underline-offset: 0.15em; }
+a:focus-visible, button:focus-visible, input:focus-visible, summary:focus-visible {
+  outline: 3px solid var(--focus);
+  outline-offset: 2px;
+  border-radius: 3px;
+}
+h1, h2, h3, h4 { font-family: var(--f-display); text-wrap: balance; line-height: 1.15; margin: 0; }
+code, pre, kbd { font-family: var(--f-mono); }
+:not(pre) > code {
+  background: var(--code-bg);
+  color: var(--code-ink);
+  padding: 0.05em 0.35em;
+  border-radius: 4px;
+  font-size: 0.88em;
+  overflow-wrap: anywhere;
+}
+
+/* Portada */
+.cover { display: grid; gap: 1rem; padding-block: 1rem 2rem; border-bottom: 2px solid var(--ink); }
+.eyebrow {
+  font-family: var(--f-mono);
+  font-size: 0.78rem;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--muted);
+}
+.rec { display: inline-flex; align-items: center; gap: 0.5rem; }
+.rec::before {
+  content: "";
+  width: 0.6rem; height: 0.6rem; border-radius: 50%;
+  background: var(--rec);
+}
+.cover h1 {
+  font-size: var(--step-3);
+  font-weight: 800;
+  font-stretch: 115%;
+  letter-spacing: -0.01em;
+}
+.cover h1 span { display: block; color: var(--rec); }
+.byline { font-size: var(--step-1); margin: 0; }
+.byline b { font-weight: 700; }
+.intro { margin: 0; color: var(--muted); }
+.notice {
+  border: 1px solid var(--rule);
+  background: var(--card);
+  padding: 0.9rem 1rem;
+  border-radius: 6px;
+  font-size: 0.95rem;
+  margin: 0;
+}
+.legend { display: flex; flex-wrap: wrap; gap: 0.6rem 1.2rem; font-size: 0.95rem; }
+.legend span { display: inline-flex; gap: 0.45rem; align-items: center; }
+
+/* Etiquetas riff / trámite */
+.tag {
+  font-family: var(--f-mono);
+  font-size: 0.72rem;
+  font-weight: 600;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  padding: 0.15rem 0.5rem;
+  border-radius: 3px;
+  white-space: nowrap;
+}
+.tag-riff { background: var(--riff); color: var(--paper); }
+.tag-tram { color: var(--tram); border: 1.5px dashed var(--tram); }
+
+/* Set list */
+nav.setlist { padding-block: 2rem; border-bottom: 1px solid var(--rule); }
+nav.setlist h2 { font-size: var(--step-2); font-stretch: 110%; margin-bottom: 1rem; }
+nav.setlist ol {
+  list-style: none; margin: 0; padding: 0;
+  display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 19rem), 1fr));
+  gap: 0.25rem 2rem;
+}
+nav.setlist li { max-width: none; }
+nav.setlist a {
+  display: grid; grid-template-columns: 2.4rem 1fr; gap: 0.5rem;
+  padding: 0.45rem 0; color: var(--ink); text-decoration: none;
+  border-bottom: 1px dotted var(--rule);
+}
+nav.setlist a:hover .t { text-decoration: underline; }
+nav.setlist .n { font-family: var(--f-mono); color: var(--rec); font-variant-numeric: tabular-nums; }
+nav.setlist .c { display: block; font-size: 0.85rem; color: var(--muted); }
+
+/* Secciones */
+section.track { padding-block: 2.5rem 1rem; border-bottom: 1px solid var(--rule); display: grid; gap: 1.1rem; }
+.track-head { display: grid; gap: 0.4rem; }
+.track-head .eyebrow b { color: var(--rec); font-weight: 600; }
+.track h2 { font-size: var(--step-2); font-weight: 800; font-stretch: 110%; }
+.track h3 { font-size: var(--step-1); font-weight: 700; margin-top: 0.4rem; }
+.track > p, .track p { margin: 0; }
+.lede { font-size: 1.12rem; }
+
+.pair { display: grid; gap: 1rem; }
+.block { padding: 1.1rem 1.1rem 1.2rem; border-radius: 6px; display: grid; gap: 0.75rem; min-width: 0; }
+.block > header { display: flex; align-items: center; gap: 0.6rem; flex-wrap: wrap; }
+.block > header h3 { margin: 0; font-size: 1.12rem; }
+.riff { background: var(--riff-bg); border-top: 3px solid var(--riff); }
+.tram { background: var(--tram-bg); border: 1.5px dashed var(--tram); }
+.block ul, .block ol, .track ul, .track ol { margin: 0; padding-left: 1.25rem; display: grid; gap: 0.4rem; }
+.block p { margin: 0; }
+
+.dato {
+  display: grid; grid-template-columns: auto 1fr; gap: 0.2rem 1rem; align-items: baseline;
+  padding: 0.8rem 1rem; border-left: 0; border-top: 1px solid var(--rule); border-bottom: 1px solid var(--rule);
+}
+.dato .num { font-family: var(--f-display); font-weight: 800; font-stretch: 100%; font-size: 1.7rem; color: var(--rec); font-variant-numeric: tabular-nums; }
+.dato .lbl { color: var(--muted); font-size: 0.95rem; }
+.datos { display: grid; gap: 0; }
+.fuente { font-size: 0.85rem; color: var(--muted); margin: 0; }
+
+.version-note {
+  font-size: 0.88rem; color: var(--muted);
+  font-family: var(--f-mono); letter-spacing: 0.01em;
+}
+
+/* Trampas numeradas */
+ol.traps { list-style: none; padding: 0; margin: 0; counter-reset: trap; display: grid; gap: 0.9rem; }
+ol.traps > li {
+  counter-increment: trap;
+  display: grid; grid-template-columns: 2.6rem 1fr; gap: 0.75rem; max-width: none;
+}
+ol.traps > li::before {
+  content: counter(trap);
+  font-family: var(--f-display); font-weight: 800; font-size: 1.35rem;
+  color: var(--paper); background: var(--ink);
+  width: 2.2rem; height: 2.2rem; border-radius: 50%;
+  display: grid; place-items: center; font-variant-numeric: tabular-nums;
+}
+ol.traps > li > div { min-width: 0; }
+ol.traps b { display: block; }
+
+/* Cicatrices: una regla por tarjeta */
+ol.scars { list-style: none; padding: 0; margin: 0; counter-reset: scar; display: grid; gap: 1rem; }
+ol.scars > li {
+  counter-increment: scar; max-width: none; min-width: 0;
+  background: var(--card); border: 1px solid var(--rule); border-left: 4px solid var(--rec);
+  border-radius: 6px; padding: 1rem; display: grid; gap: 0.6rem;
+}
+ol.scars h4 { font-size: 1.08rem; font-weight: 700; }
+ol.scars h4::before { content: counter(scar) " · "; color: var(--rec); font-variant-numeric: tabular-nums; }
+ol.scars p { margin: 0; }
+.scar-k {
+  font-family: var(--f-mono); font-size: 0.72rem; font-weight: 600;
+  letter-spacing: 0.1em; text-transform: uppercase; color: var(--muted);
+  display: block; margin-bottom: 0.1rem;
+}
+.scar-lesson { border-top: 1px dotted var(--rule); padding-top: 0.5rem; }
+
+/* Rutas A / B */
+.paths { display: grid; gap: 1rem; grid-template-columns: repeat(auto-fit, minmax(min(100%, 18rem), 1fr)); }
+.path { background: var(--card); border: 1px solid var(--rule); border-radius: 6px; padding: 1rem; display: grid; gap: 0.6rem; align-content: start; min-width: 0; }
+.path h3 { margin: 0; }
+.chain { list-style: none; padding: 0 !important; margin: 0; display: grid; gap: 0.3rem !important; }
+.chain li { font-family: var(--f-mono); font-size: 0.85rem; padding: 0.35rem 0.6rem; background: var(--code-bg); border-radius: 4px; }
+.chain li + li::before { content: "↓ "; color: var(--rec); }
+
+/* Código */
+.code { position: relative; min-width: 0; }
+.code pre {
+  margin: 0; background: var(--code-bg); color: var(--code-ink);
+  border: 1px solid var(--rule); border-radius: 6px;
+  padding: 2.4rem 1rem 1rem; overflow-x: auto;
+  font-size: 0.82rem; line-height: 1.55; tab-size: 4;
+}
+.code .lang {
+  position: absolute; top: 0.55rem; left: 0.9rem;
+  font-family: var(--f-mono); font-size: 0.7rem; letter-spacing: 0.1em; text-transform: uppercase; color: var(--muted);
+}
+.code button {
+  position: absolute; top: 0.4rem; right: 0.4rem;
+  font: 600 0.78rem var(--f-body);
+  background: var(--card); color: var(--ink);
+  border: 1px solid var(--rule); border-radius: 4px; padding: 0.25rem 0.6rem; cursor: pointer;
+}
+.code button:hover { border-color: var(--ink); }
+
+/* Cinco para llevar */
+ol.five { list-style: none; padding: 0; margin: 0; counter-reset: five; display: grid; gap: 0; }
+ol.five li {
+  counter-increment: five; max-width: none;
+  display: grid; grid-template-columns: 3rem 1fr; align-items: baseline;
+  padding: 0.85rem 0; border-bottom: 1px solid var(--rule);
+  font-family: var(--f-display); font-weight: 700; font-size: var(--step-1); font-stretch: 105%;
+}
+ol.five li::before { content: counter(five); color: var(--rec); font-size: 1.6rem; font-weight: 800; font-variant-numeric: tabular-nums; }
+
+/* Lecturas */
+.reading { list-style: none; padding: 0 !important; margin: 0; display: grid; gap: 0.9rem !important; }
+.reading li { max-width: none; display: grid; gap: 0.15rem; }
+.reading .who { font-weight: 700; }
+.reading .url { font-family: var(--f-mono); font-size: 0.82rem; overflow-wrap: anywhere; }
+
+/* Checklist */
+.check-group { display: grid; gap: 0.35rem; background: var(--card); border: 1px solid var(--rule); border-radius: 6px; padding: 1rem; }
+.check-group h3 { margin: 0 0 0.4rem; }
+.check-item { display: grid; grid-template-columns: 1.6rem 1fr; gap: 0.5rem; align-items: start; padding: 0.3rem 0; }
+.check-item input { width: 1.15rem; height: 1.15rem; margin: 0.25rem 0 0; accent-color: var(--rec); }
+.check-item label { cursor: pointer; }
+.check-item input:checked + label { color: var(--muted); text-decoration: line-through; text-decoration-color: var(--rule); }
+.check-tools { display: flex; flex-wrap: wrap; gap: 0.75rem; align-items: center; }
+.check-tools button {
+  font: 600 0.9rem var(--f-body); background: transparent; color: var(--ink);
+  border: 1px solid var(--rule); border-radius: 4px; padding: 0.35rem 0.8rem; cursor: pointer;
+}
+.check-tools .count { font-family: var(--f-mono); font-size: 0.85rem; color: var(--muted); font-variant-numeric: tabular-nums; }
+
+.back { font-size: 0.9rem; }
+footer.colofon { padding-block: 2rem 0; display: grid; gap: 0.5rem; font-size: 0.92rem; color: var(--muted); }
+footer.colofon p { margin: 0; }
+</style>
+<style media="(prefers-color-scheme: dark)">
+:root:not([data-theme="light"]) {
+  --paper: #0f131a;
+  --card: #161b24;
+  --ink: #e5e8ee;
+  --muted: #9ba5b5;
+  --rule: #2a3241;
+  --rec: #ff6e80;
+  --riff: #86b2ff;
+  --riff-bg: #15223a;
+  --tram: #f0b660;
+  --tram-bg: #2a2114;
+  --code-bg: #181e29;
+  --code-ink: #dfe4ec;
+  --focus: #86b2ff;
+  color-scheme: dark;
+}
+</style>
+<style media="(min-width: 760px)">
+.pair { grid-template-columns: 1fr 1fr; align-items: start; }
+.pair.stack { grid-template-columns: 1fr; }
+</style>
+<style media="(prefers-reduced-motion: reduce)">
+* { scroll-behavior: auto !important; transition: none !important; animation: none !important; }
+</style>
+<style media="print">
+:root, :root[data-theme="dark"], :root:not([data-theme="light"]) {
+  --paper: #ffffff; --card: #ffffff; --ink: #000000; --muted: #333333; --rule: #999999;
+  --rec: #000000; --riff: #000000; --riff-bg: #ffffff; --tram: #000000; --tram-bg: #ffffff;
+  --code-bg: #f2f2f2; --code-ink: #000000; color-scheme: light;
+}
+body { font-size: 11pt; }
+.wrap { max-width: none; padding: 0; }
+nav.setlist, .back, .code button, .check-tools { display: none !important; }
+section.track, .block, .path, .check-group, ol.traps > li, ol.scars > li, .code, .dato { break-inside: avoid; }
+h2, h3 { break-after: avoid; }
+.code pre { white-space: pre-wrap; overflow: visible; }
+.reading a::after { content: ""; }
+.tag-riff { border: 1px solid #000; }
+section#checklist { break-before: page; }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+<header class="cover">
+  <p class="eyebrow rec">Mexico Dreamin' 2026 · Material de apoyo</p>
+  <h1>De chatbot rentado a agente propio: <span>el paso a paso</span></h1>
+  <p class="byline"><b>Orlando Briceño</b> · Salesforce Architect, Rock &amp; Roll Hall of Fame</p>
+  <p class="intro">En la charla, la pantalla va ligera a propósito. Aquí está el detalle que no se dice en voz alta: qué contar, qué medir, qué clics y comandos, y las trampas en las que caí para que tú no caigas. Sigue el mismo orden del set list.</p>
+  <div class="legend" aria-label="Cómo leer esta página">
+    <span><span class="tag tag-riff">El riff</span> lo técnico que costó</span>
+    <span><span class="tag tag-tram">El trámite</span> lo institucional que costó</span>
+  </div>
+  <p class="notice">Así estaba en octubre de 2026. Agentforce y Data Cloud cambian con cada release: los nombres de menús, comandos y casillas pueden haber cambiado. Revisa la documentación actual antes de seguir un paso al pie de la letra.</p>
+</header>
+
+<nav class="setlist" id="indice" aria-labelledby="setlist-h">
+  <h2 id="setlist-h">Set list</h2>
+  <ol>
+    <li><a href="#antes-de-comprar"><span class="n">01</span><span><span class="t">Antes de comprar nada</span><span class="c">Canción 1 · El cover</span></span></a></li>
+    <li><a href="#venderlo-adentro"><span class="n">02</span><span><span class="t">Cómo venderlo adentro</span><span class="c">Canción 2 · La audición</span></span></a></li>
+    <li><a href="#pdfs-al-sitio"><span class="n">03</span><span><span class="t">Del cassette a la estación en vivo</span><span class="c">Canción 2 · La audición</span></span></a></li>
+    <li><a href="#agente-archivo"><span class="n">04</span><span><span class="t">Un agente es un archivo</span><span class="c">Canción 3 · El estudio</span></span></a></li>
+    <li><a href="#probar"><span class="n">05</span><span><span class="t">Probar de verdad</span><span class="c">Canción 4 · La gira de prueba · reglas y anatomía de una respuesta</span></span></a></li>
+    <li><a href="#estreno"><span class="n">06</span><span><span class="t">El día del estreno</span><span class="c">Canción 5 · Noche de estreno</span></span></a></li>
+    <li><a href="#manana-siguiente"><span class="n">07</span><span><span class="t">La mañana siguiente</span><span class="c">Canción 6 · La mañana siguiente</span></span></a></li>
+    <li><a href="#version-2"><span class="n">08</span><span><span class="t">Lo que dejamos para la versión 2</span><span class="c">Lado B</span></span></a></li>
+    <li><a href="#politica"><span class="n">09</span><span><span class="t">Política de IA</span><span class="c">Lado B</span></span></a></li>
+    <li><a href="#cinco"><span class="n">10</span><span><span class="t">Cinco para llevar</span><span class="c">Encore</span></span></a></li>
+    <li><a href="#checklist"><span class="n">11</span><span><span class="t">Checklist imprimible</span><span class="c">Para la junta del lunes</span></span></a></li>
+  </ol>
+</nav>
+
+<main>
+
+<!-- 1 -->
+<section class="track" id="antes-de-comprar" aria-labelledby="h1s">
+  <div class="track-head">
+    <p class="eyebrow"><b>01</b> · Canción 1 · El cover</p>
+    <h2 id="h1s">Antes de comprar nada</h2>
+  </div>
+  <p class="lede">Si ya tienes un chatbot, tus visitantes ya te dijeron qué necesitan. Antes de evaluar plataformas, lee lo que te preguntaron.</p>
+
+  <div class="datos">
+    <div class="dato"><span class="num">11,791</span><span class="lbl">conversaciones en un año que nadie había leído (recuento propio, junio 2025 a junio 2026; el dashboard del proveedor decía otra cosa)</span></div>
+    <div class="dato"><span class="num">96%</span><span class="lbl">de los pulgares abajo fueron a respuestas que el bot sí dio</span></div>
+  </div>
+
+  <div class="pair">
+    <article class="block riff">
+      <header><span class="tag tag-riff">El riff</span><h3>Exporta y recuenta tú</h3></header>
+      <ol>
+        <li><b>Pide el export crudo</b>, no el reporte: transcripciones completas, los clics a links (link-outs) y el log de lo que escribió el visitante. Si el proveedor limita filas por descarga, bájalo en partes.</li>
+        <li><b>Hazlo antes de que termine el contrato.</b> Cuando se acaba el acceso, se acaban los datos.</li>
+        <li><b>Arma una taxonomía de palabras clave</b> sobre el log (estacionamiento, horarios, boletos, membresía, accesibilidad…) y cuenta volumen por tema y por mes. La temporada que importa salta sola.</li>
+        <li><b>Cuenta lo que importa:</b>
+          <ul>
+            <li>Tasa de "no sé": cuántas respuestas fueron la frase de respaldo del bot ("no tengo esa información" o la que use el tuyo).</li>
+            <li>Pulgares abajo en preguntas que <em>sí</em> se contestaron. Ahí está el problema de especificidad: el bot sabía del tema pero no contestó lo que le preguntaron.</li>
+            <li>La lista de preguntas sin respuesta. Esa lista es tu backlog de contenido, y es gratis.</li>
+            <li>Reparto por canal: sitio, Facebook, sitio de boletos o donde viva el bot.</li>
+          </ul>
+        </li>
+      </ol>
+    </article>
+    <article class="block tram">
+      <header><span class="tag tag-tram">El trámite</span><h3>Por qué tu número y el del proveedor no cuadran</h3></header>
+      <ul>
+        <li>El dashboard del proveedor cuenta con sus propias definiciones: qué es una conversación, qué sesiones excluye, cómo calcula la satisfacción. Tu recuento usa las tuyas.</li>
+        <li>No tienes que reconciliar las dos cifras para decidir. Sí tienes que decir de dónde sale la tuya: "recuento propio del export crudo, de tal fecha a tal fecha".</li>
+        <li>Pide el export con tiempo. Al proveedor saliente no le urge, y el formato puede tardar en llegar.</li>
+      </ul>
+    </article>
+  </div>
+  <p class="back"><a href="#indice">Volver al set list</a></p>
+</section>
+
+<!-- 2 -->
+<section class="track" id="venderlo-adentro" aria-labelledby="h2s">
+  <div class="track-head">
+    <p class="eyebrow"><b>02</b> · Canción 2 · La audición</p>
+    <h2 id="h2s">Cómo venderlo adentro</h2>
+  </div>
+  <p class="lede">Vende con algo que tu jefe pueda verificar, no con algo que le tenga que creer.</p>
+
+  <div class="pair">
+    <article class="block tram">
+      <header><span class="tag tag-tram">El trámite</span><h3>De condición a medida</h3></header>
+      <ol>
+        <li><b>Pide la condición, no la opinión.</b> Nuestro jefe no pidió una demo. Puso una condición: que nadie tenga que estar manteniendo al agente a mano, que un cambio en el sitio le llegue solo. Una condición se puede medir.</li>
+        <li><b>Tradúcela a números</b> antes de la reunión de decisión (ver los tres números a la derecha).</li>
+        <li><b>Dibuja la línea v1 / v2 por escrito</b> el mismo día que se decide. Qué entra en la primera versión y qué no. Lo que dejas fuera es lo primero que te van a preguntar.</li>
+        <li><b>Prepara las preguntas no técnicas.</b> En las sesiones con el staff preguntaron por empleos, derechos de autor, consumo de energía y si la plataforma va a existir en diez años. Eso también es parte de la audición.</li>
+      </ol>
+    </article>
+    <article class="block riff">
+      <header><span class="tag tag-riff">El riff</span><h3>Tres números que vale la pena medir</h3></header>
+      <ul>
+        <li><b>Cobertura del sitio:</b> qué parte de las páginas de tu sitemap está en el índice que lee el agente. Mídela tú contra el sitemap.</li>
+        <li><b>Tiempo de cambio a respuesta:</b> edita una página (con alguien de web), anota la hora y pregúntale al agente al día siguiente. Cuenta las horas hasta que cita la frase nueva.</li>
+        <li><b>Trabajo a mano:</b> cuántos archivos hay que subir o cambiar a mano para que ese cambio llegue. La meta de la condición era cero.</li>
+      </ul>
+      <div class="datos">
+        <div class="dato"><span class="num">94%</span><span class="lbl">de las páginas del sitio, visibles para el agente</span></div>
+        <div class="dato"><span class="num">&lt; 26 h</span><span class="lbl">de un cambio en el sitio a la respuesta del agente</span></div>
+        <div class="dato"><span class="num">0</span><span class="lbl">PDFs subidos a mano</span></div>
+      </div>
+    </article>
+  </div>
+
+  <article class="block tram">
+    <header><span class="tag tag-tram">El trámite</span><h3>El calendario lo pone el contrato, no tu sprint</h3></header>
+    <ul>
+      <li>Busca hoy la fecha de renovación del bot actual y, sobre todo, la <b>fecha límite para avisar</b> que no renuevas. Suele ser semanas antes de la renovación.</li>
+      <li>Consigue los <b>términos completos</b>, no solo la forma de renovación. Sin ellos, la fecha límite de tu proyecto sale de una suposición.</li>
+      <li>Revisa si se renueva solo. Un contrato que se renueva solo decide tu deadline por ti.</li>
+      <li>Pon la fecha de aviso en el calendario de quien firma, no solo en el tuyo.</li>
+    </ul>
+  </article>
+  <p class="back"><a href="#indice">Volver al set list</a></p>
+</section>
+
+<!-- 3 -->
+<section class="track" id="pdfs-al-sitio" aria-labelledby="h3s">
+  <div class="track-head">
+    <p class="eyebrow"><b>03</b> · Canción 2 · La audición</p>
+    <h2 id="h3s">Del cassette a la estación en vivo</h2>
+  </div>
+  <p class="lede">El PDF es el cassette: suena a lo que había el día que lo grabaste. Tu sitio es la estación en vivo. Hay dos caminos para darle conocimiento al agente, y los dos sirven.</p>
+
+  <div class="paths">
+    <article class="path">
+      <p class="eyebrow">Camino A · el cassette</p>
+      <h3>Agentforce Data Library con archivos</h3>
+      <p>Subes tus documentos a una Data Library y el agente contesta con ellos. Para un PoC o un agente sencillo es un muy buen punto de partida: en una tarde tienes un agente que responde con tus documentos.</p>
+      <p><b>El límite:</b> un cassette no se entera de lo que cambió después de grabarlo, y alguien tiene que acordarse de volver a grabar. A las pocas semanas nuestros PDFs ya traían un precio viejo y una fecha de evento equivocada; la versión que leía el sitio las tenía bien. Buen lugar para empezar. Mal lugar para quedarse.</p>
+    </article>
+    <article class="path">
+      <p class="eyebrow">Camino B · la estación en vivo</p>
+      <h3>Tu sitio, conectado con Data Cloud</h3>
+      <p>Un conector lee el sitemap de tu sitio cada día y vuelve a indexar lo que cambió. Nadie sube nada. La cadena, de arriba abajo:</p>
+      <ol class="chain">
+        <li>Conector web (sitemap)</li>
+        <li>Data lake object / data model object con búsqueda semántica</li>
+        <li>Search index</li>
+        <li>Retriever</li>
+        <li>Data Library del agente</li>
+      </ol>
+    </article>
+  </div>
+
+  <article class="block riff">
+    <header><span class="tag tag-riff">El riff</span><h3>Las trampas del camino B, en orden</h3></header>
+    <p class="version-note">Así estaba en octubre de 2026; revisa la documentación actual.</p>
+    <ol class="traps">
+      <li><div><b>El conector web no se crea desde Data Streams.</b> Se crea en Setup → Data Cloud Setup → Other Connectors → New. El data stream lo genera el sistema cuando creas el data lake object (en nuestro caso, Data Lake Objects → New → From External Files).</div></li>
+      <li><div><b>La casilla de búsqueda semántica (semantic search) se marca al crear el data lake object.</b> Es la que crea los objetos de fragmentos (chunks) y el índice. Si se te pasa, hay que rehacer el objeto.</div></li>
+      <li><div><b>Si tu sitio no publica links en sus directorios, usa el modo sitemap.</b> El modo que sigue links (crawler) no encuentra páginas que nadie enlaza.</div></li>
+      <li><div><b>La primera corrida dice PENDING sin contadores durante mucho tiempo.</b> Significa que está corriendo, no que se atoró. No la vuelvas a disparar ni abras caso todavía. El historial de corridas está en la pestaña de historial de refresh del stream.</div></li>
+      <li><div><b>El search index dice "Ready" antes de estar poblado.</b> La primera vez dale Rebuild a mano.</div></li>
+      <li><div><b>Un retriever no sirve hasta que lo activas.</b> Después lo agregas a la Data Library como retriever personalizado. Al configurarlo, el título sale de los atributos directos del objeto de datos y el texto del fragmento, de los atributos relacionados del objeto de chunks.</div></li>
+      <li><div><b>"Success" con cero registros con problema no es cobertura.</b> Nuestro conector reportó éxito mientras dejaba fuera una parte importante de las URLs. No le creas al estado: mide. Cuenta las URLs de tu sitemap, cuenta las URLs distintas que sí están en el índice y compara. Quita del cálculo las páginas que no tienen texto o que el propio sitio devuelve con error. Repite la medición después de cada corrida, no solo la primera vez.</div></li>
+      <li><div><b>Más despacio leyó más.</b> Con un ritmo alto de solicitudes por segundo, cada día faltaban páginas distintas. Bajar el ajuste de solicitudes por segundo del conector subió la cobertura; el 94% llegó a velocidad baja. La causa no la confirmamos: sospechamos que el sitio no contestaba a ese ritmo. Si tu cobertura cambia de un día a otro, prueba bajar la velocidad y vuelve a medir antes de abrir un caso.</div></li>
+      <li><div><b>Los pies de página repetidos ocupan resultados.</b> Un bloque que aparece en todas las páginas genera fragmentos casi idénticos que desplazan contenido real. Si tu conector permite elegir el elemento de la página que se indexa (por ejemplo, el contenido principal), úsalo. El retriever filtra poco; lo que no quieras, límpialo antes, en el objeto de datos.</div></li>
+      <li><div><b>El conector puede traer documentos enlazados que no están en tu sitemap.</b> A nosotros nos entraron PDFs enlazados desde las páginas, incluso después de desmarcar ese tipo de archivo. Revisa qué contiene el índice, no solo qué configuraste.</div></li>
+      <li><div><b>Los fragmentos llegan sin URL, sin fecha y sin idioma.</b> El resumidor de la acción de búsqueda recibe una lista de fragmentos sin esos datos, y su prompt no es editable. Una regla como "prefiere la página más nueva" o "prefiere la página en inglés" no puede funcionar. Si una página vieja todavía menciona algo, esa mención puede ganar: la solución es arreglar el sitio, no el agente. Más detalle en <a href="#anatomia">Anatomía de una respuesta</a>.</div></li>
+    </ol>
+  </article>
+
+  <article class="block tram">
+    <header><span class="tag tag-tram">El trámite</span><h3>El agente es un espejo de tu sitio</h3></header>
+    <ul>
+      <li>Antes de conectar el sitio, pregunta quién es dueño de cada dato que cambia: horarios, precios, qué está abierto hoy, eventos. Si nadie lo es, el agente va a repetir lo que quede escrito.</li>
+      <li>En el Summit de septiembre pregunté "¿qué se rompe primero?": 4 de 6 dijeron "el contenido que nadie posee".</li>
+      <li>Pon dueño y cadencia de revisión a cada página que el agente usa para responder lo urgente.</li>
+      <li>El índice también genera consumo cada vez que reprocesa. Lo vemos en la canción 6.</li>
+    </ul>
+  </article>
+  <p class="back"><a href="#indice">Volver al set list</a></p>
+</section>
+
+<!-- 4 -->
+<section class="track" id="agente-archivo" aria-labelledby="h4s">
+  <div class="track-head">
+    <p class="eyebrow"><b>04</b> · Canción 3 · El estudio</p>
+    <h2 id="h4s">Un agente es un archivo</h2>
+  </div>
+  <p class="lede">Un agente no se configura. Se versiona. Con Agent Script, todo el agente (subagentes, instrucciones, acciones, configuración) vive en un archivo <code>.agent</code> dentro de un authoring bundle, y ese archivo va en git.</p>
+
+  <div class="pair stack">
+    <article class="block riff">
+      <header><span class="tag tag-riff">El riff</span><h3>Una sola fuente de verdad</h3></header>
+      <ol>
+        <li><b>El archivo en git manda.</b> Lo que sale de una publicación (bots, planner bundles) es residuo; no lo edites a mano.</li>
+        <li><b>Publica solo desde main</b>, con tu copia local igual a la del remoto. Si main es idéntico a lo publicado, publicar desde main no puede regresar producción a algo viejo.</li>
+        <li><b>El rollback es activar la versión anterior.</b> Tarda segundos.</li>
+        <li><b>La trampa del borrador del Builder.</b> El Builder guarda sus propios borradores. Un número de versión más alto no quiere decir contenido más nuevo: activamos una "v5" creyendo que era la más reciente, era un borrador viejo, y en silencio borró dos arreglos que ya estaban en producción. Las fechas de "última modificación" del Builder también engañan: se quedan en la última edición hecha en la interfaz.</li>
+        <li><b>Activa solo lo que acabas de publicar</b> (la versión con la fecha de creación de hoy) y <b>verifica por contenido</b>, no por número.</li>
+      </ol>
+      <div class="datos"><div class="dato"><span class="num">v5 &lt; v4</span><span class="lbl">El número de versión no dice qué trae.</span></div></div>
+    </article>
+  </div>
+
+  <h3>Comandos que ayudan</h3>
+  <p class="version-note">Así estaban en octubre de 2026; revisa la documentación actual del CLI de Salesforce.</p>
+  <div class="code"><span class="lang">Terminal · publicar</span><button type="button" data-copy>Copiar</button><pre><code># 1. Revisión de sintaxis (es un linter, no una garantía)
+sf agent validate authoring-bundle -n Mi_Agente -o &lt;tu-org&gt;
+
+# 2. Publicar desde main (aquí sí se compila de verdad)
+sf agent publish authoring-bundle -n Mi_Agente -o &lt;tu-org&gt;
+
+# 3. Hablar con la versión publicada y activa
+sf agent preview -n Mi_Agente -o &lt;tu-org&gt;</code></pre></div>
+
+  <div class="code"><span class="lang">Terminal · qué versión es la de hoy</span><button type="button" data-copy>Copiar</button><pre><code>sf data query -o &lt;tu-org&gt; -r human -q "SELECT DeveloperName, Status, CreatedDate FROM BotVersion WHERE BotDefinition.DeveloperName = 'Mi_Agente' ORDER BY CreatedDate DESC"</code></pre></div>
+
+  <div class="code"><span class="lang">Terminal · verificar por contenido</span><button type="button" data-copy>Copiar</button><pre><code># Recupera lo publicado FUERA de tu proyecto
+# (una segunda copia del bundle dentro del proyecto rompe el preview)
+sf project retrieve start -m "AiAuthoringBundle:Mi_Agente" -o &lt;tu-org&gt; --target-metadata-dir /tmp/en-vivo
+cd /tmp/en-vivo &amp;&amp; unzip -oq unpackaged.zip
+
+# Compara contra main
+diff &lt;(git -C &lt;tu-repo&gt; show origin/main:&lt;ruta-al-bundle&gt;/Mi_Agente.agent) \
+     /tmp/en-vivo/unpackaged/aiAuthoringBundles/Mi_Agente/Mi_Agente.agent &amp;&amp; echo "main == publicado"</code></pre></div>
+  <p class="fuente">Ojo: el retrieve trae lo último publicado, no necesariamente la versión activa. Revisa el estado de la versión aparte con la consulta de arriba.</p>
+
+  <article class="block riff">
+    <header><span class="tag tag-riff">El riff</span><h3>Lo que <code>validate</code> deja pasar y <code>publish</code> rechaza</h3></header>
+    <ul>
+      <li><code>elif</code> no existe en Agent Script, y un <code>if</code> anidado tampoco compila. <code>validate</code> no se queja; <code>publish</code> sí.</li>
+      <li>Desde el release de invierno de 2027 el servidor exige reglas que la validación local no revisa: una acción que apunta a una acción estándar necesita un <code>source</code>, y dos acciones dentro del <b>mismo</b> subagente no pueden compartir el mismo <code>source</code>.</li>
+      <li>Los errores del compilador a veces señalan una línea posterior a la que rompiste. Cambia una cosa y vuelve a compilar.</li>
+      <li>Una publicación fallida no crea versión. No pasa nada malo al intentarlo.</li>
+    </ul>
+    <h3>Probar que compila sin publicar</h3>
+    <p>El preview del bundle local compila el archivo en el servidor con las mismas reglas y no crea ninguna versión. Si compila ahí, compila al publicar.</p>
+    <div class="code"><span class="lang">Terminal · compilar sin publicar</span><button type="button" data-copy>Copiar</button><pre><code>sf agent preview --authoring-bundle Mi_Agente -o &lt;tu-org&gt;</code></pre></div>
+    <p>Este modo es intermitente en algunas terminales: repítelo varias veces antes de creerle una falla, y busca el texto del error de compilación, no un mensaje de éxito.</p>
+  </article>
+
+  <article class="block tram">
+    <header><span class="tag tag-tram">El trámite</span><h3>Cuando ningún sandbox tiene Agentforce</h3></header>
+    <ul>
+      <li>Pregunta qué licencias tiene tu sandbox <b>antes</b> de prometer fechas. En nuestro caso, Agentforce estaba solo en producción.</li>
+      <li>Qué hicimos: el preview del archivo local como compuerta de compilación contra producción (no publica nada), el preview de la versión publicada para probar lo que ve el visitante, y una org de prueba temporal para experimentar con cambios de estructura.</li>
+      <li>Activar el canal de chat pide aceptar términos nuevos. Alguien tiene que leerlos; en nuestro caso traían un suplemento sobre los datos que recoge el SDK del chat. Que lo vea Legal.</li>
+      <li>El widget de chat: deja que el deployment cree su propio sitio de Experience Cloud. Nosotros hicimos el sitio a mano y el widget tardó semanas en cargar. Ese sitio solo hospeda los archivos del chat; no lo modifiques.</li>
+      <li>Si las conversaciones se quedan esperando y el agente nunca entra, revisa el ruteo de Omni-Channel (una cola sin configuración de ruteo no recibe nada). A nosotros nos funcionó rutear con un flujo de Omni-Channel hacia el agente.</li>
+    </ul>
+  </article>
+  <p class="back"><a href="#indice">Volver al set list</a></p>
+</section>
+
+<!-- 5 -->
+<section class="track" id="probar" aria-labelledby="h5s">
+  <div class="track-head">
+    <p class="eyebrow"><b>05</b> · Canción 4 · La gira de prueba</p>
+    <h2 id="h5s">Probar de verdad</h2>
+  </div>
+  <p class="lede">Cinco versiones en ocho días (del 20 al 27 de octubre). Ninguna salió de una queja: todas salieron de leer trazas.</p>
+
+  <div class="pair stack">
+    <article class="block riff">
+      <header><span class="tag tag-riff">El riff</span><h3>El método</h3></header>
+      <ol>
+        <li><b>Una batería fija de preguntas.</b> Las mismas cada vez, en cada idioma que atiendes. Saca las primeras de tu lista de "no sé" del bot anterior, y genera más a partir de los subagentes y acciones de tu propio agente.</li>
+        <li><b>Un cambio a la vez.</b> Una línea de estilo para que el agente no imprimiera links crudos arregló la pregunta de estacionamiento y rompió la lista de nominados en español, 7 de 7.</li>
+        <li><b>Cuatro corridas mínimo por pregunta</b>, contra la versión anterior en el mismo modo. Una sola corrida no dice nada de un sistema que no siempre contesta igual.</li>
+        <li><b>Pon cada regla en el subagente que la necesita.</b> Una regla en el bloque de instrucciones compartido mueve a todos los demás temas.</li>
+        <li><b>Cambia el ruteo con líneas del router, no con descripciones.</b> Reescribir la descripción de un subagente nos desvió preguntas a otro subagente, y en un caso hizo que el filtro de entrada leyera una pregunta normal como intento de ingeniería inversa.</li>
+        <li><b>Lee la traza.</b> Qué subagente eligió, si buscó, qué recuperó, qué contestó. El preview local guarda las trazas en la carpeta de sesiones del proyecto.</li>
+      </ol>
+    </article>
+  </div>
+
+  <h3 id="cicatrices">Cada regla es una cicatriz</h3>
+  <p>Así se ve aprender: cada regla del agente salió de algo que falló. Aquí van ocho, en el orden en que llegaron. El agente las tiene en inglés; aquí van traducidas, recortadas y con <b>nombres genéricos</b>: lo que ves entre <code>&lt; &gt;</code> (<code>&lt;accion_de_busqueda&gt;</code>, <code>&lt;subagente_FAQ&gt;</code>…) es un marcador para que pongas el nombre de tu propio agente, no el nombre real del nuestro.</p>
+  <ol class="scars">
+    <li>
+      <h4>Responder solo después de buscar</h4>
+      <p><span class="scar-k">Qué falló</span>El agente contestaba de memoria aunque tenía la biblioteca conectada.</p>
+      <div class="code"><span class="lang">Regla · antes y después</span><button type="button" data-copy>Copiar</button><pre><code>- Usa solo hechos de la biblioteca de datos; no inventes.
++ ANTES de responder debes llamar a &lt;accion_de_busqueda&gt;
++ y basar la respuesta solo en lo que devuelve; no contestes
++ de memoria aunque creas saberlo.</code></pre></div>
+      <p class="scar-lesson"><span class="scar-k">Lo que te llevas</span>"Usa solo tus fuentes" no basta. Di qué acción llamar y cuándo.</p>
+    </li>
+    <li>
+      <h4>No prometas lo que el canal no tiene</h4>
+      <p><span class="scar-k">Qué falló</span>El agente ofrecía pasar a una persona, pero la transferencia no tenía a dónde ir y la conversación se quedaba colgada sin ningún error.</p>
+      <div class="code"><span class="lang">Regla · antes y después</span><button type="button" data-copy>Copiar</button><pre><code>- Si no puedes ayudar, ofrece pasar a un agente humano.
++ Si no puedes ayudar, da el canal oficial (&lt;correo_del_equipo&gt;
++ o &lt;telefono&gt;). No ofrezcas transferencia a un agente:
++ en este chat no existe.</code></pre></div>
+      <p class="scar-lesson"><span class="scar-k">Lo que te llevas</span>Prueba cada salida que el agente ofrece, hasta el final. Las que fallan en silencio no aparecen en ningún reporte.</p>
+    </li>
+    <li>
+      <h4>Nunca decir "no hay" cuando la verdad es "no puedo buscar así"</h4>
+      <p><span class="scar-k">Qué falló</span>Ante una pregunta por categoría, la búsqueda volvió vacía y el agente afirmó que no había ningún artista así, lo cual era falso.</p>
+      <div class="code"><span class="lang">Regla</span><button type="button" data-copy>Copiar</button><pre><code>+ NUNCA digas que no hay inductees de una categoría o atributo.
++ La biblioteca solo se busca por nombre y por año de clase:
++ un resultado vacío significa "no puedo buscar así",
++ NO "no existen".</code></pre></div>
+      <p class="scar-lesson"><span class="scar-k">Lo que te llevas</span>Un resultado vacío no es un "no". Dile al agente qué puede buscar y qué no, porque un "no existe" falso puede lastimar a alguien.</p>
+    </li>
+    <li>
+      <h4>Nada de escritura creativa</h4>
+      <p><span class="scar-k">Qué falló</span>Le pedimos un poema sobre una banda famosa y lo escribió cada vez que lo intentamos: ninguna regla decía que no.</p>
+      <div class="code"><span class="lang">Regla</span><button type="button" data-copy>Copiar</button><pre><code>+ Sin escritura creativa: nunca escribas poemas, canciones,
++ letras, chistes, cuentos ni ensayos, ni siquiera de un artista;
++ di que está fuera de lo que puedes hacer y ofrece
++ datos de su inducción o ayuda con la visita.</code></pre></div>
+      <p class="scar-lesson"><span class="scar-k">Lo que te llevas</span>Lo que no prohíbes, el agente lo hace con gusto. Escribe también lo que <em>no</em> hace, y ofrece algo a cambio.</p>
+    </li>
+    <li>
+      <h4>Pon la regla en el subagente que la necesita</h4>
+      <p><span class="scar-k">Qué falló</span>Una regla de estilo en el bloque compartido arregló la respuesta de estacionamiento y rompió la lista de nominados en español, 7 de 7.</p>
+      <div class="code"><span class="lang">Regla · de dónde sale y a dónde entra</span><button type="button" data-copy>Copiar</button><pre><code># Bloque compartido (afecta a TODOS los temas)
+- Si el texto lista varios enlaces, nombra cada opción y no imprimas la dirección.
+# Solo en el subagente que la necesita
++ Si la página trae enlaces a otros sitios (estacionamientos,
++ transporte, socios), nombra cada opción en palabras y nunca
++ imprimas su dirección.</code></pre></div>
+      <p class="scar-lesson"><span class="scar-k">Lo que te llevas</span>Una regla en un bloque compartido mueve todos los temas. La misma regla, puesta solo donde hacía falta, no rompió nada.</p>
+    </li>
+    <li>
+      <h4>Pedir que escriba no es lo mismo que preguntar</h4>
+      <p><span class="scar-k">Qué falló</span>La regla contra la escritura creativa salió demasiado ancha y mandaba fuera de tema preguntas legítimas sobre las canciones o la historia de un artista.</p>
+      <div class="code"><span class="lang">Regla · antes y después</span><button type="button" data-copy>Copiar</button><pre><code>- Petición de poema, canción, chiste o cuento -&gt; fuera de tema.
++ Petición de ESCRIBIR o COMPONER algo -&gt; fuera de tema.
++ Pregunta factual sobre canciones, historia o inducción
++ de un artista -&gt; se queda con &lt;subagente_inductees&gt;.</code></pre></div>
+      <p class="scar-lesson"><span class="scar-k">Lo que te llevas</span>Describe la intención ("pedir que escriba"), no el tema ("canciones"). Una regla nueva arregla una cosa y a veces rompe la de al lado: vuelve a correr la batería completa.</p>
+    </li>
+    <li>
+      <h4>Buscar antes de pensar, a la fuerza</h4>
+      <p><span class="scar-k">Qué falló</span>Aunque la instrucción decía "busca primero", el agente a veces contestaba de memoria y luego buscaba, y el visitante veía un aviso de que la respuesta anterior no se pudo verificar.</p>
+      <div class="code"><span class="lang">Pseudocódigo genérico</span><button type="button" data-copy>Copiar</button><pre><code>before_reasoning:
+  si hay mensaje del usuario:
+    ejecuta &lt;accion_de_busqueda&gt;
+      con la consulta = lo que escribió el visitante
+      guarda el resultado en resumenWeb
+# El agente recibe el resumen ya recuperado y no puede
+# responder sin una fuente.</code></pre></div>
+      <p class="scar-lesson"><span class="scar-k">Lo que te llevas</span>Si algo tiene que pasar siempre, no lo pidas en la instrucción: hazlo pasar en el código. Abajo está la versión en Agent Script.</p>
+    </li>
+    <li>
+      <h4>Streaming apagado</h4>
+      <p><span class="scar-k">Qué falló</span>El chat mostraba primero un borrador y segundos después lo reemplazaba con una respuesta distinta.</p>
+      <div class="code"><span class="lang">Configuración</span><button type="button" data-copy>Copiar</button><pre><code>config:
+  runtime:
+    streaming: False   # una sola respuesta final, sin borrador intermedio</code></pre></div>
+      <p class="scar-lesson"><span class="scar-k">Lo que te llevas</span>Cada arreglo tiene costo: sin streaming la respuesta tarda más en aparecer. Decide a propósito qué prefieres que vea el visitante.</p>
+    </li>
+  </ol>
+
+  <h3 id="anatomia">Anatomía de una respuesta</h3>
+  <p>Si quieres saber por qué el agente contestó algo, sigue el camino de la respuesta. Son cinco pasos:</p>
+  <ol class="chain">
+    <li>Página: lo que está publicado en tu sitio</li>
+    <li>Fragmentos: el sitio se parte en pedazos</li>
+    <li>Búsqueda: la pregunta trae los fragmentos más parecidos</li>
+    <li>Resumen: un resumidor arma la respuesta con esos fragmentos</li>
+    <li>Verificación: un verificador revisa que la respuesta salga de ahí</li>
+  </ol>
+  <article class="block riff">
+    <header><span class="tag tag-riff">El riff</span><h3>La trampa</h3></header>
+    <p>Al resumidor los fragmentos le llegan <b>sin dirección, sin fecha y sin idioma</b>. No sabe de qué página salió cada uno, ni cuál es la más nueva, ni cuál es la corregida. Por eso no puede preferir la versión buena, y ninguna instrucción tuya lo arregla: si una página vieja o una traducción sin actualizar sigue diciendo lo de antes, esa versión compite con la buena.</p>
+    <p>Si quieres saber por qué contestó eso, no leas el prompt. Lee la traza y lee la página.</p>
+  </article>
+  <article class="block tram">
+    <header><span class="tag tag-tram">El trámite</span><h3>Por eso importan los dueños del contenido</h3></header>
+    <ul>
+      <li>El agente contesta lo que tu equipo tiene escrito, tal cual. Si tu sitio miente, tu agente miente con buena ortografía.</li>
+      <li>A nosotros nos pasó: corrigieron una página el mismo día y el agente siguió contestando mal, porque la versión en español de esa página seguía con el error.</li>
+      <li>Cada página que contesta algo importante necesita dueño, y su traducción también. Cuando alguien corrige una, que corrija la otra.</li>
+    </ul>
+  </article>
+
+  <h3>Obligar a buscar antes de pensar: el detalle en Agent Script</h3>
+  <p>Aunque la instrucción diga "busca primero", el planner a veces contesta de memoria y luego corrige. Un bloque <code>before_reasoning</code> corre la búsqueda siempre, con las palabras exactas del visitante, antes de que el modelo razone.</p>
+  <div class="code"><span class="lang">Agent Script · ejemplo genérico</span><button type="button" data-copy>Copiar</button><pre><code>variables:
+    resumenSitio: mutable string = ""
+        description: "Resultado de la búsqueda en el sitio para este turno."
+        visibility: "Internal"
+
+subagent Preguntas_Generales:
+    label: "Preguntas generales"
+    description: "Responde preguntas sobre visitas, horarios y políticas buscando en el sitio."
+    before_reasoning:
+        if &#64;system_variables.user_input != None and &#64;system_variables.user_input != "":
+            run &#64;actions.Buscar_En_Sitio
+                with query = &#64;system_variables.user_input
+                set &#64;variables.resumenSitio = &#64;outputs.knowledgeSummary
+    reasoning:
+        instructions: ->
+            | Ya corrió una búsqueda en el sitio con las palabras exactas del visitante y devolvió: "{!&#64;variables.resumenSitio}". Úsalo como contenido recuperado.
+            | Si dice que no encontró respuesta, o el mensaje fue corto ("sí", "la segunda"), ignóralo y llama Buscar_En_Sitio con una consulta escrita a partir de la conversación.</code></pre></div>
+  <p class="fuente">Dos detalles de Agent Script que cuestan semanas: las salidas de una acción no llegan al modelo si no las copias a una variable con <code>set</code> e interpolas la variable en la instrucción; y en las comparaciones se usa <code>None</code>, no <code>null</code>. Costo: una búsqueda más por turno en ese subagente.</p>
+
+  <h3>Una línea del router, no una descripción</h3>
+  <div class="code"><span class="lang">Agent Script · ejemplo genérico</span><button type="button" data-copy>Copiar</button><pre><code>start_agent agent_router:
+    reasoning:
+        instructions: ->
+            | Elige la mejor herramienta según la conversación y la intención del visitante.
+            | Cambiar, reprogramar o reembolsar boletos va a Preguntas_Generales, nunca a Verificacion_Cliente.</code></pre></div>
+
+  <h3>Si el visitante ve un borrador que luego cambia: el detalle</h3>
+  <p>Con streaming encendido, el chat puede mostrar primero el resumen de la búsqueda y segundos después reemplazarlo con la respuesta final. Apagar el streaming hace que llegue una sola respuesta, a cambio de que tarde más en aparecer.</p>
+  <div class="code"><span class="lang">Agent Script · config</span><button type="button" data-copy>Copiar</button><pre><code>config:
+    developer_name: "Mi_Agente"
+    runtime:
+        streaming: False</code></pre></div>
+  <p class="fuente">El efecto solo se ve después de publicar: el preview del bundle no hace streaming.</p>
+
+  <div class="pair">
+    <article class="block riff">
+      <header><span class="tag tag-riff">El riff</span><h3>Con fuente no es lo mismo que correcto</h3></header>
+      <div class="datos"><div class="dato"><span class="num">$35 ≠ $45</span><span class="lbl">Al fragmento se le cayó una palabra: "grupo".</span></div></div>
+      <p>Ya en vivo, el agente dio un precio equivocado. Tenía fuente y pasó la verificación de grounding. Era la tarifa de grupo: al partir la página en fragmentos se perdió la palabra. La verificación te dice que no lo inventó. No te dice que esté bien. Revisa las respuestas con precios, horarios y fechas contra la página.</p>
+    </article>
+    <article class="block tram">
+      <header><span class="tag tag-tram">El trámite</span><h3>Testers que conocen el piso</h3></header>
+      <ul>
+        <li>Pon a probar a la gente que contesta preguntas todos los días (en nuestro caso, Guest Services). Encuentran respuestas viejas que tú no vas a ver.</li>
+        <li>Revisa también tus archivos curados: retiramos 74 PDFs que ya estaban viejos.</li>
+        <li>Si la herramienta te dice algo raro, primero duda de la herramienta.</li>
+      </ul>
+    </article>
+  </div>
+  <p class="back"><a href="#indice">Volver al set list</a></p>
+</section>
+
+<!-- 6 -->
+<section class="track" id="estreno" aria-labelledby="h6s">
+  <div class="track-head">
+    <p class="eyebrow"><b>06</b> · Canción 5 · Noche de estreno</p>
+    <h2 id="h6s">El día del estreno</h2>
+  </div>
+  <p class="lede">El go-live no es un deploy. Es una cadena. Nosotros salimos en vivo el 28 de octubre, y el estreno se cayó dos veces por cosas que no se ven en el sitio de pruebas.</p>
+
+  <div class="pair">
+    <article class="block riff">
+      <header><span class="tag tag-riff">El riff</span><h3>Lo que revisar antes de la hora</h3></header>
+      <ol>
+        <li><b>La lista de invitados (CORS).</b> Cada dominio que va a mostrar el chat necesita su propia entrada en la lista de orígenes permitidos (CORS) de la org. Sin ella, el widget nunca aparece. Un día antes descubrimos que producción solo dejaba entrar al sitio de pruebas.</li>
+        <li><b>El cable suelto (tag manager).</b> Si cargas el snippet con un tag manager, puede recrear la etiqueta del script y tirar un atributo. Compara la etiqueta que llega al navegador en el sitio real con el snippet original.</li>
+        <li><b>Lo publicado, no lo desplegado.</b> Un cambio de metadata al deployment del chat no llega al visitante hasta que alguien le da Publish al deployment.</li>
+        <li><b>El banner de cookies.</b> Si el chat solo carga cuando el visitante acepta cookies, quien rechaza no tiene chat. Pruébalo en una ventana privada, aceptando y rechazando.</li>
+        <li><b>Primera prueba en vivo en cada idioma</b>, en el sitio real, desde una ventana privada.</li>
+      </ol>
+      <div class="code"><span class="lang">Terminal · ¿el origen está permitido?</span><button type="button" data-copy>Copiar</button><pre><code>curl -s -D - -o /dev/null -H "Origin: https://&lt;tu-sitio&gt;" "&lt;URL de configuración que carga tu snippet&gt;"
+# Busca el encabezado Access-Control-Allow-Origin en la respuesta.
+# Si no está, ese dominio no está en la lista.</code></pre></div>
+    </article>
+    <article class="block tram">
+      <header><span class="tag tag-tram">El trámite</span><h3>Quién tiene que decir que sí</h3></header>
+      <ul>
+        <li><b>Web:</b> quién publica el tag y quién lo puede quitar rápido si algo sale mal.</li>
+        <li><b>Marketing:</b> el sí final. A nosotros nos llegó el mismo día.</li>
+        <li><b>Redes:</b> quién contesta Facebook y los demás canales donde el bot viejo seguía.</li>
+        <li><b>Legal:</b> el texto de aviso de IA, los términos del canal y si el chat depende del banner de cookies. Mover eso es pregunta para Legal, no para ti.</li>
+      </ul>
+      <p>Haz tu lista de quién tiene que decir que sí. Es más larga de lo que crees.</p>
+    </article>
+  </div>
+  <p class="back"><a href="#indice">Volver al set list</a></p>
+</section>
+
+<!-- 7 -->
+<section class="track" id="manana-siguiente" aria-labelledby="h7s">
+  <div class="track-head">
+    <p class="eyebrow"><b>07</b> · Canción 6 · La mañana siguiente</p>
+    <h2 id="h7s">La mañana siguiente</h2>
+  </div>
+  <p class="lede">Lento y cierto le gana a rápido y falso. Pero hay que decirlo.</p>
+
+  <div class="datos">
+    <div class="dato"><span class="num">1 de 2</span><span class="lbl">abre el chat y no escribe</span></div>
+    <div class="dato"><span class="num">0</span><span class="lbl">respuestas sin fuente</span></div>
+    <div class="dato"><span class="num">12–19 s</span><span class="lbl">para ver la respuesta en el navegador</span></div>
+  </div>
+
+  <div class="pair">
+    <article class="block riff">
+      <header><span class="tag tag-riff">El riff</span><h3>Qué mirar cada día</h3></header>
+      <ul>
+        <li>Las preguntas que hicieron, agrupadas por tema.</li>
+        <li>Los "no sé" honestos: cada uno es una página que falta o que nadie actualizó.</li>
+        <li>Cuántas respuestas salieron sin fuente.</li>
+        <li>La latencia donde la siente el visitante, en el navegador, no solo en el servidor.</li>
+        <li>Cuánta gente abre el chat y no escribe.</li>
+      </ul>
+      <h3>Cada pregunta, cada noche, a tu CRM</h3>
+      <p><b>Había logs. No había respuestas.</b> La plataforma guarda registros, pero no contestaban lo único que nos preguntaban: qué preguntó la gente y qué le contestamos. No traen una forma sencilla de unir la pregunta con su respuesta, y el staff que no es administrador no los ve.</p>
+      <p>Por eso, cada noche, un proceso copia cada pregunta a un objeto en Salesforce, la clasifica por intención y la deja donde el equipo ya trabaja, con dashboards de solo agregados. Las transcripciones quedan en Data Cloud; en nuestro caso llegan con retraso y en un formato que hay que parsear. Si el dato no está donde trabaja tu gente, no existe.</p>
+      <h3>Quién usa los dashboards</h3>
+      <ul>
+        <li><b>Atención a visitantes:</b> qué no supimos contestar.</li>
+        <li><b>Marketing:</b> qué páginas faltan o están viejas.</li>
+        <li><b>Curaduría:</b> qué pregunta la gente sobre los artistas.</li>
+      </ul>
+      <p>El agente va a encontrar cosas que no son del agente: quejas de otras áreas, fechas que el sitio no publica. Es el mejor buzón de quejas que hemos tenido.</p>
+    </article>
+    <article class="block riff">
+      <header><span class="tag tag-riff">El riff</span><h3>Los dos medidores</h3></header>
+      <ul>
+        <li><b>Lo que gasta cada respuesta:</b> cada acción del agente genera consumo.</li>
+        <li><b>Lo que cuesta mantener el índice:</b> cada vez que el conector reprocesa páginas o documentos, genera consumo por volumen, cambien o no.</li>
+      </ul>
+      <p><b>Mide el consumo desde el día uno.</b> En nuestro caso el índice reprocesó lo mismo todos los días durante semanas y nadie lo notó hasta que revisé el consumo. El consumo se ve en la app Digital Wallet de Salesforce (así se llamaba en octubre de 2026) y, con detalle por recurso, en los datos de consumo de Data Cloud.</p>
+      <p><b>Después de guardar, vuelve a abrir.</b> Un ajuste del conector parecía guardado; al reabrir la configuración, seguía igual. Confirma cada cambio reabriendo la pantalla y mirando el consumo de la siguiente corrida.</p>
+    </article>
+  </div>
+
+  <article class="block tram">
+    <header><span class="tag tag-tram">El trámite</span><h3>Cada "no sé" tiene dueño</h3></header>
+    <ul>
+      <li>Asigna cada tema sin respuesta a un área que pueda arreglar la página.</li>
+      <li>Algunas respuestas necesitan la aprobación de Comunicaciones antes de existir. Ten ese camino definido.</li>
+      <li>Di tú los números incómodos (latencia, gente que se va) antes de que alguien más los encuentre.</li>
+      <li>Si algo del consumo no cuadra, documenta día por día y repórtalo a soporte con evidencia. Es método, no queja.</li>
+    </ul>
+  </article>
+  <p class="back"><a href="#indice">Volver al set list</a></p>
+</section>
+
+<!-- 8 -->
+<section class="track" id="version-2" aria-labelledby="h8s">
+  <div class="track-head">
+    <p class="eyebrow"><b>08</b> · Lado B</p>
+    <h2 id="h8s">Lo que dejamos para la versión 2</h2>
+  </div>
+  <p class="lede">Dejamos cosas fuera a propósito. Lo que dejas fuera de la versión uno es lo primero que te van a preguntar: ten la respuesta lista.</p>
+
+  <div class="pair">
+    <article class="block riff">
+      <header><span class="tag tag-riff">El riff</span><h3>Qué quedó fuera y por qué</h3></header>
+      <ul>
+        <li><b>Visitante verificado y consulta de membresía.</b> La consulta con código por correo está construida y guardada. Leer datos de una persona pide más pruebas y más permisos que contestar preguntas públicas.</li>
+        <li><b>Messenger.</b> Por acuerdo, quedó para la siguiente versión pública. Necesita su propia conversación con Redes.</li>
+        <li><b>Paridad en español.</b> El buscador entiende mejor el inglés, y nuestras páginas en español son las más viejas. Mide el español con su propia batería antes de prometer paridad.</li>
+      </ul>
+    </article>
+    <article class="block tram">
+      <header><span class="tag tag-tram">El trámite</span><h3>Los modelos se retiran</h3></header>
+      <p>El modelo sobre el que corre tu agente tiene fecha de retiro. Mudarte a otro significa volver a correr la batería completa, con las mismas cuatro corridas por pregunta. Ponlo en el plan anual como trabajo recurrente, no como sorpresa.</p>
+      <p>Un agente no se entrega. Se mantiene.</p>
+    </article>
+  </div>
+
+  <article class="block tram">
+    <header><span class="tag tag-tram">El trámite</span><h3>Apagar lo viejo es otro proyecto</h3></header>
+    <p>Sabíamos que el bot rentado contestaba en Facebook, y por acuerdo ese canal quedó para después. La sorpresa fue otra: nos avisaron que algo más estaba contestando en Messenger y no lo esperábamos, y luego encontramos el chat del bot rentado en la plataforma de boletos, cargado dos veces. Quitabas uno y seguía el otro.</p>
+    <ul>
+      <li>Antes de despedir a tu proveedor, haz la lista de cada lugar donde vive su widget o contesta por ti: tu sitio, redes sociales, la plataforma de boletos y cualquier página de un tercero.</li>
+      <li>Para cada lugar: quién lo quita y cómo vas a comprobar que ya no está, en una ventana privada.</li>
+      <li>Busca también lo que nadie anotó: pregúntale a quien atiende cada canal si algo más está contestando.</li>
+    </ul>
+  </article>
+  <p class="back"><a href="#indice">Volver al set list</a></p>
+</section>
+
+<!-- 9 -->
+<section class="track" id="politica" aria-labelledby="h9s">
+  <div class="track-head">
+    <p class="eyebrow"><b>09</b> · Lado B</p>
+    <h2 id="h9s">Política de IA</h2>
+  </div>
+  <p class="lede">Eso no lo arregla un prompt. Lo arregla una política.</p>
+
+  <article class="block tram">
+    <header><span class="tag tag-tram">El trámite</span><h3>El hueco</h3></header>
+    <p>La mayoría de las políticas de IA hablan del staff usando herramientas. La nuestra también. No decía nada de un agente hablando con el público.</p>
+    <div class="datos"><div class="dato"><span class="num">6 de 9</span><span class="lbl">en el Summit dijeron que alguien en crisis debe llegar a un humano en minutos. Las mismas 6 dijeron que nadie está disponible el sábado a las 9 de la noche.</span></div></div>
+  </article>
+
+  <h3>Cinco preguntas que tu política tiene que contestar</h3>
+  <ol class="traps">
+    <li><div>Un agente le contesta a un visitante cada pocos segundos. ¿Quién revisa antes de que algo se "publique"?</div></li>
+    <li><div>¿Avisas que es IA solo donde la plataforma lo exige, o siempre?</div></li>
+    <li><div>¿Dónde está el registro, y puedes probar de dónde salió una respuesta?</div></li>
+    <li><div>¿El contenido de tus colecciones puede entrenar un modelo? Decídelo por escrito.</div></li>
+    <li><div>¿Quién es dueño del documento, qué versión es y cuándo se revisa?</div></li>
+  </ol>
+
+  <h3>Lista de lecturas</h3>
+  <p class="fuente">Fuentes verificadas en septiembre de 2026 en la página de cada editor. Están en inglés.</p>
+  <ul class="reading">
+    <li><span class="who">ICOM (International Council of Museums)</span><span>Code of Ethics for Museums, edición 2026.</span><a class="url" href="https://icom.museum/en/resources/standards-guidelines/code-of-ethics" target="_blank" rel="noopener">icom.museum/en/resources/standards-guidelines/code-of-ethics</a></li>
+    <li><span class="who">AAM (American Alliance of Museums)</span><span>Core Standards for Museums; el primero es Public Trust and Accountability.</span><a class="url" href="https://aam-us.org/programs/ethics-standards-and-professional-practices/core-standards-for-museums" target="_blank" rel="noopener">aam-us.org/programs/ethics-standards-and-professional-practices/core-standards-for-museums</a></li>
+    <li><span class="who">NIST (National Institute of Standards and Technology)</span><span>AI Risk Management Framework: Govern, Map, Measure, Manage. Gratis, con playbook y plantillas.</span><a class="url" href="https://nist.gov/itl/ai-risk-management-framework" target="_blank" rel="noopener">nist.gov/itl/ai-risk-management-framework</a></li>
+    <li><span class="who">CultureHive / Arts Marketing Association</span><span>AI Policy Workbook, versión 3, con una sección de IA agéntica. Es británico: adáptalo antes de usarlo.</span><a class="url" href="https://culturehive.co.uk/resources/artificial-intelligence-ai-example-ai-policy" target="_blank" rel="noopener">culturehive.co.uk/resources/artificial-intelligence-ai-example-ai-policy</a></li>
+    <li><span class="who">ALA (American Library Association)</span><span>Guidance on the Use of AI in Libraries, adoptada en julio de 2026.</span><a class="url" href="https://ala.org/news/2026/07/ala-council-adopts-guidance-use-artificial-intelligence-libraries" target="_blank" rel="noopener">ala.org/news/2026/07/ala-council-adopts-guidance-use-artificial-intelligence-libraries</a></li>
+    <li><span class="who">UNESCO + ICOM</span><span>Encuesta global a museos sobre su propio uso de IA; resultados en el Global Forum on the Ethics of AI.</span><a class="url" href="https://unesco.org/en/forum-ethics-ai" target="_blank" rel="noopener">unesco.org/en/forum-ethics-ai</a></li>
+  </ul>
+  <p class="back"><a href="#indice">Volver al set list</a></p>
+</section>
+
+<!-- 10 -->
+<section class="track" id="cinco" aria-labelledby="h10s">
+  <div class="track-head">
+    <p class="eyebrow"><b>10</b> · Encore</p>
+    <h2 id="h10s">Cinco para llevar</h2>
+  </div>
+  <ol class="five">
+    <li>Lee tus transcripts antes de comprar.</li>
+    <li>Vende con una condición medible.</li>
+    <li>Ponle dueño al contenido.</li>
+    <li>Duda del medidor.</li>
+    <li>El go-live es gente, no un deploy.</li>
+  </ol>
+  <p class="lede">El riff se aprende. El trámite se sobrevive.</p>
+  <p class="back"><a href="#indice">Volver al set list</a></p>
+</section>
+
+<!-- 11 -->
+<section class="track" id="checklist" aria-labelledby="h11s">
+  <div class="track-head">
+    <p class="eyebrow"><b>11</b> · Para imprimir</p>
+    <h2 id="h11s">Checklist</h2>
+  </div>
+  <p>Marca lo que ya hiciste. Las marcas se guardan solo en este navegador, si el navegador lo permite.</p>
+  <div class="check-tools">
+    <span class="count" id="check-count" aria-live="polite"></span>
+    <button type="button" id="check-reset">Desmarcar todo</button>
+  </div>
+
+  <div class="check-group">
+    <h3>Antes de comprar nada</h3>
+    <div class="check-item"><input type="checkbox" id="c-b1"><label for="c-b1">Pedí el export crudo del bot actual: transcripciones, link-outs y log de entradas.</label></div>
+    <div class="check-item"><input type="checkbox" id="c-b2"><label for="c-b2">Lo recibí antes de que termine el acceso.</label></div>
+    <div class="check-item"><input type="checkbox" id="c-b3"><label for="c-b3">Conté la tasa de "no sé" (frase de respaldo del bot).</label></div>
+    <div class="check-item"><input type="checkbox" id="c-b4"><label for="c-b4">Conté pulgares abajo en preguntas que sí se contestaron.</label></div>
+    <div class="check-item"><input type="checkbox" id="c-b5"><label for="c-b5">Saqué la lista de preguntas sin respuesta y la convertí en backlog de contenido.</label></div>
+    <div class="check-item"><input type="checkbox" id="c-b6"><label for="c-b6">Conté el reparto por canal y por mes.</label></div>
+    <div class="check-item"><input type="checkbox" id="c-b7"><label for="c-b7">Anoté de dónde sale mi número y en qué difiere del dashboard del proveedor.</label></div>
+    <div class="check-item"><input type="checkbox" id="c-b8"><label for="c-b8">Encontré la fecha de renovación y la fecha límite para avisar.</label></div>
+    <div class="check-item"><input type="checkbox" id="c-b9"><label for="c-b9">Tengo los términos completos del contrato.</label></div>
+    <div class="check-item"><input type="checkbox" id="c-b10"><label for="c-b10">Convertí la condición del jefe en números medibles.</label></div>
+    <div class="check-item"><input type="checkbox" id="c-b11"><label for="c-b11">Escribí la línea v1 / v2.</label></div>
+    <div class="check-item"><input type="checkbox" id="c-b12"><label for="c-b12">Confirmé qué licencias de Agentforce tiene mi sandbox.</label></div>
+  </div>
+
+  <div class="check-group">
+    <h3>Sitio, reglas y gira de prueba</h3>
+    <div class="check-item"><input type="checkbox" id="c-p1"><label for="c-p1">Medí la cobertura contando las URLs del índice contra el sitemap, sin fiarme del estado "éxito" del conector.</label></div>
+    <div class="check-item"><input type="checkbox" id="c-p2"><label for="c-p2">Si la cobertura cambia de un día a otro, probé bajar las solicitudes por segundo del conector y volví a medir.</label></div>
+    <div class="check-item"><input type="checkbox" id="c-p3"><label for="c-p3">Cada regla nueva tiene anotado qué falló, en qué subagente vive y con cuántas corridas la probé.</label></div>
+    <div class="check-item"><input type="checkbox" id="c-p4"><label for="c-p4">Las reglas de un solo tema viven en su subagente, no en el bloque compartido.</label></div>
+    <div class="check-item"><input type="checkbox" id="c-p5"><label for="c-p5">El agente distingue "no existe" de "no puedo buscar así", y busca antes de contestar.</label></div>
+    <div class="check-item"><input type="checkbox" id="c-p6"><label for="c-p6">Cada página que contesta algo importante tiene dueño, y su versión traducida también.</label></div>
+    <div class="check-item"><input type="checkbox" id="c-p7"><label for="c-p7">Cuando una respuesta sale mal, leo la traza y la página antes de tocar el prompt.</label></div>
+  </div>
+
+  <div class="check-group">
+    <h3>Día del estreno</h3>
+    <div class="check-item"><input type="checkbox" id="c-g1"><label for="c-g1">El dominio de producción está en la lista de orígenes permitidos (CORS), además del de pruebas.</label></div>
+    <div class="check-item"><input type="checkbox" id="c-g2"><label for="c-g2">El deployment del chat está publicado (no solo desplegado).</label></div>
+    <div class="check-item"><input type="checkbox" id="c-g3"><label for="c-g3">Comparé la etiqueta del script en el sitio real contra el snippet: el tag manager no tiró ningún atributo.</label></div>
+    <div class="check-item"><input type="checkbox" id="c-g4"><label for="c-g4">Probé con el banner de cookies: aceptando y rechazando.</label></div>
+    <div class="check-item"><input type="checkbox" id="c-g5"><label for="c-g5">Web dijo que sí y sabe cómo quitar el chat rápido.</label></div>
+    <div class="check-item"><input type="checkbox" id="c-g6"><label for="c-g6">Marketing dijo que sí.</label></div>
+    <div class="check-item"><input type="checkbox" id="c-g7"><label for="c-g7">Redes sabe quién contesta en cada canal.</label></div>
+    <div class="check-item"><input type="checkbox" id="c-g8"><label for="c-g8">Legal revisó el aviso de IA, los términos del canal y la dependencia del banner de cookies.</label></div>
+    <div class="check-item"><input type="checkbox" id="c-g9"><label for="c-g9">Primera prueba en vivo en cada idioma, desde una ventana privada.</label></div>
+    <div class="check-item"><input type="checkbox" id="c-g10"><label for="c-g10">Activé solo la versión que acabo de publicar y la verifiqué por contenido.</label></div>
+    <div class="check-item"><input type="checkbox" id="c-g11"><label for="c-g11">Hice inventario de cada lugar donde vive el widget del proveedor anterior, con dueño para quitarlo.</label></div>
+  </div>
+
+  <div class="check-group">
+    <h3>La mañana siguiente</h3>
+    <div class="check-item"><input type="checkbox" id="c-g12"><label for="c-g12">Tengo listo el tablero para mirar consumo y preguntas desde el día uno.</label></div>
+    <div class="check-item"><input type="checkbox" id="c-m1"><label for="c-m1">Cada noche, las preguntas llegan a mi CRM clasificadas por intención, donde el equipo ya trabaja.</label></div>
+    <div class="check-item"><input type="checkbox" id="c-m2"><label for="c-m2">Atención a visitantes, marketing y curaduría tienen un dashboard de solo agregados.</label></div>
+    <div class="check-item"><input type="checkbox" id="c-m3"><label for="c-m3">Cada tema sin respuesta tiene un área dueña que puede arreglar la página.</label></div>
+  </div>
+  <p class="back"><a href="#indice">Volver al set list</a></p>
+</section>
+
+</main>
+
+<footer class="colofon">
+  <p>Elaborado con asistencia de IA. Revisado y aprobado por el presentador.</p>
+  <p>Esto es la experiencia de un equipo, no documentación oficial de Salesforce.</p>
+  <p>Orlando Briceño · Salesforce Architect, Rock &amp; Roll Hall of Fame · Mexico Dreamin' 2026</p>
+</footer>
+
+</div>
+<script>
+(function () {
+  // Copiar bloques de código
+  document.querySelectorAll("[data-copy]").forEach(function (btn) {
+    btn.addEventListener("click", function () {
+      var code = btn.parentElement.querySelector("pre code");
+      var text = code ? code.innerText : "";
+      var done = function (msg) {
+        btn.textContent = msg;
+        setTimeout(function () { btn.textContent = "Copiar"; }, 1800);
+      };
+      var selectIt = function () {
+        try {
+          var r = document.createRange();
+          r.selectNodeContents(code);
+          var s = window.getSelection();
+          s.removeAllRanges();
+          s.addRange(r);
+          done("Seleccionado");
+        } catch (e) { done("Copia a mano"); }
+      };
+      try {
+        if (navigator.clipboard && navigator.clipboard.writeText) {
+          navigator.clipboard.writeText(text).then(function () { done("Copiado"); }, selectIt);
+        } else { selectIt(); }
+      } catch (e) { selectIt(); }
+    });
+  });
+
+  // Checklist con estado local opcional
+  var KEY = "mxd26-checklist";
+  var boxes = Array.prototype.slice.call(document.querySelectorAll("#checklist input[type=checkbox]"));
+  var countEl = document.getElementById("check-count");
+  var load = function () {
+    try { return JSON.parse(localStorage.getItem(KEY) || "{}") || {}; } catch (e) { return {}; }
+  };
+  var save = function (state) {
+    try { localStorage.setItem(KEY, JSON.stringify(state)); } catch (e) { /* sin almacenamiento: la página sigue funcionando */ }
+  };
+  var update = function () {
+    var n = boxes.filter(function (b) { return b.checked; }).length;
+    if (countEl) countEl.textContent = n + " de " + boxes.length + " listos";
+  };
+  var state = load();
+  boxes.forEach(function (b) {
+    if (state[b.id]) b.checked = true;
+    b.addEventListener("change", function () {
+      state[b.id] = b.checked;
+      save(state);
+      update();
+    });
+  });
+  var reset = document.getElementById("check-reset");
+  if (reset) reset.addEventListener("click", function () {
+    boxes.forEach(function (b) { b.checked = false; });
+    state = {};
+    save(state);
+    update();
+  });
+  update();
+})();
+</script>
+</body>
+</html>
