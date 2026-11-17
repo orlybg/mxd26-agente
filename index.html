@@ -150,6 +150,12 @@ nav.setlist a {
 nav.setlist a:hover .t { text-decoration: underline; }
 nav.setlist .n { font-family: var(--f-mono); color: var(--rec); font-variant-numeric: tabular-nums; }
 nav.setlist .c { display: block; font-size: 0.85rem; color: var(--muted); }
+nav.setlist .playlist { margin-top: 1.5rem; padding-top: 1rem; border-top: 1px dashed var(--rule); display: grid; gap: 0.6rem; }
+nav.setlist .playlist p { margin: 0; }
+nav.setlist .playlist ul { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 19rem), 1fr)); gap: 0.2rem 2rem; font-size: 0.92rem; }
+nav.setlist .playlist li { max-width: none; }
+nav.setlist .playlist .k { font-family: var(--f-mono); font-size: 0.8rem; color: var(--muted); }
+nav.setlist .playlist a.sp { display: inline; padding: 0; border: 0; color: var(--rec); font-weight: 600; white-space: nowrap; }
 
 /* Secciones */
 section.track { padding-block: 2.5rem 1rem; border-bottom: 1px solid var(--rule); display: grid; gap: 1.1rem; }
@@ -338,18 +344,31 @@ section#checklist { break-before: page; }
 <nav class="setlist" id="indice" aria-labelledby="setlist-h">
   <h2 id="setlist-h">Set list</h2>
   <ol>
-    <li><a href="#antes-de-comprar"><span class="n">01</span><span><span class="t">Antes de comprar nada</span><span class="c">Canción 1 · El cover</span></span></a></li>
-    <li><a href="#venderlo-adentro"><span class="n">02</span><span><span class="t">Cómo venderlo adentro</span><span class="c">Canción 2 · La audición</span></span></a></li>
-    <li><a href="#pdfs-al-sitio"><span class="n">03</span><span><span class="t">Del cassette a la estación en vivo</span><span class="c">Canción 2 · La audición</span></span></a></li>
-    <li><a href="#agente-archivo"><span class="n">04</span><span><span class="t">Un agente es un archivo</span><span class="c">Canción 3 · El estudio</span></span></a></li>
-    <li><a href="#probar"><span class="n">05</span><span><span class="t">Probar de verdad</span><span class="c">Canción 4 · La gira de prueba · reglas y anatomía de una respuesta</span></span></a></li>
-    <li><a href="#estreno"><span class="n">06</span><span><span class="t">El día del estreno</span><span class="c">Canción 5 · Noche de estreno</span></span></a></li>
-    <li><a href="#manana-siguiente"><span class="n">07</span><span><span class="t">La mañana siguiente</span><span class="c">Canción 6 · La mañana siguiente</span></span></a></li>
+    <li><a href="#antes-de-comprar"><span class="n">01</span><span><span class="t">Antes de comprar nada</span><span class="c">Track 1 · El cover</span></span></a></li>
+    <li><a href="#venderlo-adentro"><span class="n">02</span><span><span class="t">Cómo venderlo adentro</span><span class="c">Track 2 · La audición</span></span></a></li>
+    <li><a href="#pdfs-al-sitio"><span class="n">03</span><span><span class="t">Del cassette a la estación en vivo</span><span class="c">Track 2 · La audición</span></span></a></li>
+    <li><a href="#agente-archivo"><span class="n">04</span><span><span class="t">Un agente es un archivo</span><span class="c">Track 3 · El estudio</span></span></a></li>
+    <li><a href="#probar"><span class="n">05</span><span><span class="t">Probar de verdad</span><span class="c">Track 4 · La gira de prueba · reglas y anatomía de una respuesta</span></span></a></li>
+    <li><a href="#estreno"><span class="n">06</span><span><span class="t">El día del estreno</span><span class="c">Track 5 · Noche de estreno</span></span></a></li>
+    <li><a href="#manana-siguiente"><span class="n">07</span><span><span class="t">La mañana siguiente</span><span class="c">Track 6 · La mañana siguiente</span></span></a></li>
     <li><a href="#version-2"><span class="n">08</span><span><span class="t">Lo que dejamos para la versión 2</span><span class="c">Lado B</span></span></a></li>
     <li><a href="#politica"><span class="n">09</span><span><span class="t">Política de IA</span><span class="c">Lado B</span></span></a></li>
     <li><a href="#cinco"><span class="n">10</span><span><span class="t">Cinco para llevar</span><span class="c">Encore</span></span></a></li>
     <li><a href="#checklist"><span class="n">11</span><span><span class="t">Checklist imprimible</span><span class="c">Para la junta del lunes</span></span></a></li>
   </ol>
+  <div class="playlist" id="playlist">
+    <p><b>La playlist del set list.</b> Cada track de la charla abre con una rola. Están todas en una lista: <a class="sp" href="https://open.spotify.com/playlist/22hXkULc5cesP0JKNzDPR7" target="_blank" rel="noopener">abrir en Spotify ↗</a></p>
+    <ul>
+      <li><span class="k">Track 1</span> · U2, "I Still Haven't Found What I'm Looking For"</li>
+      <li><span class="k">Track 2</span> · The Clash, "Should I Stay or Should I Go"</li>
+      <li><span class="k">Track 3</span> · Caifanes, "La célula que explota"</li>
+      <li><span class="k">Track 4</span> · Queen y David Bowie, "Under Pressure"</li>
+      <li><span class="k">Track 5</span> · Guns N' Roses, "Welcome to the Jungle"</li>
+      <li><span class="k">Track 6</span> · Pink Floyd, "Money"</li>
+      <li><span class="k">Lado B</span> · The Rolling Stones, "You Can't Always Get What You Want"</li>
+      <li><span class="k">Encore</span> · Soda Stereo, "De música ligera"</li>
+    </ul>
+  </div>
 </nav>
 
 <main>
@@ -357,7 +376,7 @@ section#checklist { break-before: page; }
 <!-- 1 -->
 <section class="track" id="antes-de-comprar" aria-labelledby="h1s">
   <div class="track-head">
-    <p class="eyebrow"><b>01</b> · Canción 1 · El cover</p>
+    <p class="eyebrow"><b>01</b> · Track 1 · El cover</p>
     <h2 id="h1s">Antes de comprar nada</h2>
   </div>
   <p class="lede">Si ya tienes un chatbot, tus visitantes ya te dijeron qué necesitan. Antes de evaluar plataformas, lee lo que te preguntaron.</p>
@@ -399,7 +418,7 @@ section#checklist { break-before: page; }
 <!-- 2 -->
 <section class="track" id="venderlo-adentro" aria-labelledby="h2s">
   <div class="track-head">
-    <p class="eyebrow"><b>02</b> · Canción 2 · La audición</p>
+    <p class="eyebrow"><b>02</b> · Track 2 · La audición</p>
     <h2 id="h2s">Cómo venderlo adentro</h2>
   </div>
   <p class="lede">Vende con algo que tu jefe pueda verificar, no con algo que le tenga que creer.</p>
@@ -444,7 +463,7 @@ section#checklist { break-before: page; }
 <!-- 3 -->
 <section class="track" id="pdfs-al-sitio" aria-labelledby="h3s">
   <div class="track-head">
-    <p class="eyebrow"><b>03</b> · Canción 2 · La audición</p>
+    <p class="eyebrow"><b>03</b> · Track 2 · La audición</p>
     <h2 id="h3s">Del cassette a la estación en vivo</h2>
   </div>
   <p class="lede">El PDF es el cassette: suena a lo que había el día que lo grabaste. Tu sitio es la estación en vivo. Hay dos caminos para darle conocimiento al agente, y los dos sirven.</p>
@@ -494,7 +513,7 @@ section#checklist { break-before: page; }
       <li>Antes de conectar el sitio, pregunta quién es dueño de cada dato que cambia: horarios, precios, qué está abierto hoy, eventos. Si nadie lo es, el agente va a repetir lo que quede escrito.</li>
       <li>En el Summit de septiembre pregunté "¿qué se rompe primero?": 4 de 6 dijeron "el contenido que nadie posee".</li>
       <li>Pon dueño y cadencia de revisión a cada página que el agente usa para responder lo urgente.</li>
-      <li>El índice también genera consumo cada vez que reprocesa. Lo vemos en la canción 6.</li>
+      <li>El índice también genera consumo cada vez que reprocesa. Lo vemos en el track 6.</li>
     </ul>
   </article>
   <p class="back"><a href="#indice">Volver al set list</a></p>
@@ -503,7 +522,7 @@ section#checklist { break-before: page; }
 <!-- 4 -->
 <section class="track" id="agente-archivo" aria-labelledby="h4s">
   <div class="track-head">
-    <p class="eyebrow"><b>04</b> · Canción 3 · El estudio</p>
+    <p class="eyebrow"><b>04</b> · Track 3 · El estudio</p>
     <h2 id="h4s">Un agente es un archivo</h2>
   </div>
   <p class="lede">Un agente no se configura. Se versiona. Con Agent Script, todo el agente (subagentes, instrucciones, acciones, configuración) vive en un archivo <code>.agent</code> dentro de un authoring bundle, y ese archivo va en git.</p>
@@ -575,7 +594,7 @@ diff &lt;(git -C &lt;tu-repo&gt; show origin/main:&lt;ruta-al-bundle&gt;/Mi_Agen
 <!-- 5 -->
 <section class="track" id="probar" aria-labelledby="h5s">
   <div class="track-head">
-    <p class="eyebrow"><b>05</b> · Canción 4 · La gira de prueba</p>
+    <p class="eyebrow"><b>05</b> · Track 4 · La gira de prueba</p>
     <h2 id="h5s">Probar de verdad</h2>
   </div>
   <p class="lede">Cinco versiones en ocho días (del 20 al 27 de octubre). Ninguna salió de una queja: todas salieron de leer trazas.</p>
@@ -755,7 +774,7 @@ subagent Preguntas_Generales:
 <!-- 6 -->
 <section class="track" id="estreno" aria-labelledby="h6s">
   <div class="track-head">
-    <p class="eyebrow"><b>06</b> · Canción 5 · Noche de estreno</p>
+    <p class="eyebrow"><b>06</b> · Track 5 · Noche de estreno</p>
     <h2 id="h6s">El día del estreno</h2>
   </div>
   <p class="lede">El go-live no es un deploy. Es una cadena. Nosotros salimos en vivo el 28 de octubre, y el estreno se cayó dos veces por cosas que no se ven en el sitio de pruebas.</p>
@@ -791,7 +810,7 @@ subagent Preguntas_Generales:
 <!-- 7 -->
 <section class="track" id="manana-siguiente" aria-labelledby="h7s">
   <div class="track-head">
-    <p class="eyebrow"><b>07</b> · Canción 6 · La mañana siguiente</p>
+    <p class="eyebrow"><b>07</b> · Track 6 · La mañana siguiente</p>
     <h2 id="h7s">La mañana siguiente</h2>
   </div>
   <p class="lede">Lento y cierto le gana a rápido y falso. Pero hay que decirlo.</p>
@@ -799,8 +818,10 @@ subagent Preguntas_Generales:
   <div class="datos">
     <div class="dato"><span class="num">1 de 2</span><span class="lbl">abre el chat y no escribe</span></div>
     <div class="dato"><span class="num">0</span><span class="lbl">respuestas sin fuente</span></div>
+    <div class="dato"><span class="num">3</span><span class="lbl">"no sé" honestos: mejor un "no sé" que un invento</span></div>
     <div class="dato"><span class="num">12–19 s</span><span class="lbl">para ver la respuesta en el navegador</span></div>
   </div>
+  <p class="fuente">Números de la primera noche en vivo (28 de octubre de 2026).</p>
 
   <div class="pair">
     <article class="block riff">
@@ -833,6 +854,15 @@ subagent Preguntas_Generales:
       <p><b>Después de guardar, vuelve a abrir.</b> Un ajuste del conector parecía guardado; al reabrir la configuración, seguía igual. Confirma cada cambio reabriendo la pantalla y mirando el consumo de la siguiente corrida.</p>
     </article>
   </div>
+
+  <article class="block tram">
+    <header><span class="tag tag-tram">El trámite</span><h3>La cuenta: de anualidad fija a pagar por uso</h3></header>
+    <ul>
+      <li>Con el bot rentado pagábamos una cuota fija al año. Con Agentforce pagas lo que usas, y la licencia trae una bolsa de consumo incluida.</li>
+      <li>Antes de salir, haz la cuenta con el volumen real de tu bot actual: cuántas conversaciones al año, qué tan largas son y cuántos intercambios tiene cada una. A nosotros nos alcanzaba con la bolsa, sin comprar más.</li>
+      <li>La sorpresa no vino de las conversaciones, vino del índice: el conector volvía a leer cada noche los PDFs enlazados en el sitio aunque no cambiaran. Lo documentamos día por día, soporte lo reprodujo y la ingeniería de Salesforce lo corrigió. Desde noviembre de 2026 nuestro índice ya no lee PDFs.</li>
+    </ul>
+  </article>
 
   <article class="block tram">
     <header><span class="tag tag-tram">El trámite</span><h3>Cada "no sé" tiene dueño</h3></header>
@@ -925,10 +955,10 @@ subagent Preguntas_Generales:
     <h2 id="h10s">Cinco para llevar</h2>
   </div>
   <ol class="five">
-    <li>Lee tus transcripts antes de comprar.</li>
-    <li>Vende con una condición medible.</li>
-    <li>Ponle dueño al contenido.</li>
-    <li>Duda del medidor.</li>
+    <li>Lee lo que ya te preguntaron.</li>
+    <li>Define qué es "lo logramos" antes de empezar.</li>
+    <li>Tu agente es tan bueno como tu sitio.</li>
+    <li>Cada regla nueva: vuelve a probar todo.</li>
     <li>El go-live es gente, no un deploy.</li>
   </ol>
   <p class="lede">El riff se aprende. El trámite se sobrevive.</p>
@@ -1002,7 +1032,7 @@ subagent Preguntas_Generales:
 </main>
 
 <footer class="colofon">
-  <p>Elaborado con asistencia de IA. Revisado y aprobado por el presentador.</p>
+  <p>Elaborado con asistencia de IA. Revisado y aprobado por el presentador. Actualizado el 17 de noviembre de 2026.</p>
   <p>Esto es la experiencia de un equipo, no documentación oficial de Salesforce.</p>
   <p>Orlando Briceño · Salesforce Architect, Rock &amp; Roll Hall of Fame · Mexico Dreamin' 2026</p>
 </footer>
